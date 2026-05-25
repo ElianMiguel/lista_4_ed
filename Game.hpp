@@ -4,6 +4,7 @@
 #include <string>
 
 class Game {
+    
 private:
     std::string title;
     std::string shortDescription;
