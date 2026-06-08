@@ -23,36 +23,48 @@ Trie::Trie() {
 Trie::~Trie() {}
 
 std::string Trie::toSearchKey(std::string text) {
-    char* ptr = text.data();
-    while (*ptr != '\0') {
-        if (int(*ptr) == 32) {
-            ptr++;
+    char* readPtr = text.data();
+    char* writePtr = text.data();
+    while (*readPtr != '\0') {
+        if (*readPtr == 32) {
+            readPtr++;
         }
-        if (int(*ptr) >= 65 && int(*ptr) <= 90) {
-            *ptr += 32;
+        if (*readPtr >= 65 && *readPtr <= 90) {
+            *writePtr = *readPtr + 32;
+        } else {
+            *writePtr = *readPtr;
         }
+
+        readPtr++;
+        writePtr++;
     }
 
-    std::string new_text = ptr;
-    return new_text;
+    text.resize(writePtr - text.data());
+    return text;
+}
+
+int Trie::getIndex(char c) {
+    if (c >= 'a' && c <= 'z') {
+        return c - 'a';
+    }
+    if (c >= '0' && c <= '9') {
+        return 26 + (c - '0');
+    }
+    return -1;
 }
 
 bool Trie::insert(Game* game) {
     TrieNode* current = this->root;
     std::string title = toSearchKey(game->getTitle());
+
     for (char c : title) {
-        if (current->children == nullptr) {
-            TrieNode* node = new TrieNode();
-            if (int(c) >= 48 && int(c) <= 57) {
-                current->children[25 + c - '0'];
-            }
-            current->children[c - 'a'] = node;
+        int index = getIndex(c);
+
+        if (current->children[index] == nullptr) {
+            current->children[index] = new TrieNode(); 
         }
 
-        if (int(c) >= 48 && int(c) <= 57) {
-            current = current->children[25 + c - '0'];
-        }
-        current = current->children[c - 'a'];
+        current = current->children[index];
     }
 
     current->isEndOfTitle = true;
@@ -61,7 +73,20 @@ bool Trie::insert(Game* game) {
 }
 
 bool Trie::contains(std::string title) {
+    std::string normalized = toSearchKey(title);
+    TrieNode* current = this->root;
 
+    for (char c : title) {
+        int index = getIndex(c);
+        
+        if (current->children[index] == nullptr) {
+            return false;
+        }
+
+        current = current->children[index];
+    }
+
+    return current->isEndOfTitle;
 }
 
 std::vector<Game*> Trie::autocomplete(std::string prefix, int k) {}

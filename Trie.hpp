@@ -39,6 +39,8 @@ public:
     void sortResults(std::vector<Game*>& games);
 
     // Outros métodos auxiiares, se necessário
+
+    int getIndex(char c);
 };
 
 #endif
