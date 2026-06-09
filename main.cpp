@@ -29,6 +29,7 @@ int main(int argc, char* argv[]) {
     for (Game* game : results) {
         std::cout << "[ " << game->getTitle() << " | " << game->getShortDescription() << " | "
         << game->getPopularity() << " ]" << std::endl;
+        std::cout << std::endl;
     }
 
     return 0;

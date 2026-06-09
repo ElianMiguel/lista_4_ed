@@ -12,7 +12,13 @@ TrieNode::TrieNode() {
     this->game = nullptr;
 }
 
-TrieNode::~TrieNode() {}
+TrieNode::~TrieNode() {
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
+        if (this->children[i] != nullptr) {
+            delete this->children[i];
+        }
+    }
+}
 
 // Funções da classe Trie
 
@@ -20,7 +26,11 @@ Trie::Trie() {
     this->root = nullptr;
 }
 
-Trie::~Trie() {}
+Trie::~Trie() {
+    if (this->root != nullptr) {
+        delete this->root;
+    }
+}
 
 std::string Trie::toSearchKey(std::string text) {
     char* readPtr = text.data();
@@ -28,6 +38,7 @@ std::string Trie::toSearchKey(std::string text) {
     while (*readPtr != '\0') {
         if (*readPtr == 32) {
             readPtr++;
+            continue;
         }
         if (*readPtr >= 65 && *readPtr <= 90) {
             *writePtr = *readPtr + 32;
