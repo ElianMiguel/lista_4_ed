@@ -35,13 +35,13 @@ public:
 
     std::vector<Game*> autocomplete(std::string prefix, int k);
 
-    void search(TrieNode* node, std::vector<Game*>& results);
     std::string toSearchKey(std::string text);
 
     void sortResults(std::vector<Game*>& games);
 
     // Outros métodos auxiiares, se necessário
 
+    void search(TrieNode* node, std::vector<Game*>& results);
     int getIndex(char c);
 };
 
