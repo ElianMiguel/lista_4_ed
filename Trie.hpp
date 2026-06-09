@@ -24,9 +24,6 @@ class Trie {
 private:
 
     TrieNode* root;
-    
-    void merge(std::vector<Game*>& games, int low, int mid, int high);
-    void mergeSort(std::vector<Game*>& games, int low, int high);
 
 public:
 
@@ -38,7 +35,7 @@ public:
 
     std::vector<Game*> autocomplete(std::string prefix, int k);
 
-    void search(TrieNode* node, std::vector<Game*>& results, int k);
+    void search(TrieNode* node, std::vector<Game*>& results);
     std::string toSearchKey(std::string text);
 
     void sortResults(std::vector<Game*>& games);

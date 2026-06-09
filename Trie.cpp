@@ -1,8 +1,5 @@
 #include "Trie.hpp"
-<<<<<<< HEAD
 #include <string>
-=======
->>>>>>> b6549ee (add ultima funcoes do tries e main)
 
 // Funções da classe TrieNode
 
@@ -57,13 +54,10 @@ int Trie::getIndex(char c) {
 }
 
 bool Trie::insert(Game* game) {
-<<<<<<< HEAD
-=======
     if (this->root == nullptr) {
         this->root = new TrieNode();
     }
 
->>>>>>> b6549ee (add ultima funcoes do tries e main)
     TrieNode* current = this->root;
     std::string title = toSearchKey(game->getTitle());
 
@@ -101,13 +95,12 @@ bool Trie::contains(std::string title) {
     return current->isEndOfTitle;
 }
 
-void Trie::search(TrieNode* node, std::vector<Game*>& results, int k) {
-    if (results.size() >= k) return;
+void Trie::search(TrieNode* node, std::vector<Game*>& results) {
     if (node->isEndOfTitle) results.push_back(node->game);
 
     for (int i = 0; i < ALPHABET_SIZE; i++) {
         if (node->children[i] != nullptr) {
-            search(node->children[i], results, k);
+            search(node->children[i], results);
         }
     }
 }
@@ -115,7 +108,7 @@ void Trie::search(TrieNode* node, std::vector<Game*>& results, int k) {
 std::vector<Game*> Trie::autocomplete(std::string prefix, int k) {
     std::vector<Game*> results;
 
-    if (this->root == nullptr) {
+    if (this->root == nullptr || k <= 0) {
         return results; 
     }
 
@@ -132,58 +125,30 @@ std::vector<Game*> Trie::autocomplete(std::string prefix, int k) {
         current = current->children[index];
     }
 
-    search(current, results, k);
+    search(current, results);
     sortResults(results);
+
+    if (results.size() > k) {
+        results.resize(k);
+    }
+
     return results;
 }
 
-void Trie::merge(std::vector<Game*>& games, int low, int mid, int high) {
-    std::vector<Game*> left(games.begin() + low, games.begin() + mid + 1);
-    std::vector<Game*> right(games.begin() + mid + 1, games.begin() + high + 1);
-
-    int i = 0;
-    int j = 0;
-
-    while(i < mid - low + 1 && j < high - mid) {
-        if (left[i]->getPopularity() > right[j]->getPopularity()) {
-            games[low + i + j] = left[i];
-            i++;
-        }
-        else if (left[i]->getPopularity() == right[j]->getPopularity() && 
-                 toSearchKey(left[i]->getTitle()) <= toSearchKey(right[j]->getTitle())) {
-            games[low + i + j] = left[i];
-            i++;
-        }
-        else {
-            games[low + i + j] = right[j];
-            j++;
-        }
-    }
-
-    while (i < mid - low + 1) {
-        games[low + i + j] = left[i];
-        i++;
-    }
-
-    while (j < high - mid) {
-        games[low + i + j] = right[j];
-        j++;
-    }
-}
-
-void Trie::mergeSort(std::vector<Game*>& games, int low, int high) {
-    if (low >= high) return;
-
-    int mid = low + (high - low) / 2;
-
-    mergeSort(games, low, mid);
-    mergeSort(games, mid + 1, high);
-
-    merge(games, low, mid, high);
-}
-
 void Trie::sortResults(std::vector<Game*>& games) {
-    if (games.empty()) return;
+    // Usando insertion sort
+    for (int i = 1; i < games.size(); i++) {
+        Game* key = games[i];
+        int j = i - 1;
+        std::string keyTitle = toSearchKey(key->getTitle());
 
-    mergeSort(games, 0, games.size() - 1);
+        while (j >= 0 && (key->getPopularity() > games[j]->getPopularity() ||
+                            (key->getPopularity() == games[j]->getPopularity() &&
+                             keyTitle < toSearchKey(games[j]->getTitle())))) {
+            games[j + 1] = games[j];
+            j--;
+        }
+
+        games[j + 1] = key;
+    }
 }
